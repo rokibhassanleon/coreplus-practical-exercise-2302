@@ -1,4 +1,5 @@
-﻿using Coreplus.Sample.Api.Types;
+﻿using Coreplus.Sample.Api.Helpers;
+using Coreplus.Sample.Api.Types;
 using Coreplus.Sample.Api.Utils;
 using System;
 using System.Text.Json;
@@ -9,7 +10,7 @@ namespace Coreplus.Sample.Api.Services
 	{
 		public record AppointmentSummaryDto(long? id, long practitioner_id, int year, int month, decimal revenue, decimal cost);
 		public record AppointmentDetailsDto(long id, DateTimeOffset date, string client_name, string appointment_type, int duration);
-		public async Task<IEnumerable<AppointmentSummaryDto>> GetRevenueAndCostByPractitioner(long practitionerId, DateTime dtStart, DateTime dtEnd)
+		public async Task<APIResponse<IEnumerable<AppointmentSummaryDto>>> GetRevenueAndCostByPractitioner(long practitionerId, DateTime dtStart, DateTime dtEnd)
 		{
 			using var fileStream = File.OpenRead(@"./Data/appointments.json");
 
@@ -27,9 +28,14 @@ namespace Coreplus.Sample.Api.Services
 									.GroupBy(x => new { x.date.Year, x.date.Month })
 									.Select(s => new AppointmentSummaryDto(null, practitionerId, s.Key.Year, s.Key.Month, s.Sum(r => r.revenue), s.Sum(c => c.cost)));
 
-			return result;
+			if(!result.Any())
+			{
+				return new APIResponse<IEnumerable<AppointmentSummaryDto>>() { statusCode = 404, message = "No record found!" };
+			}
+			
+			return new APIResponse<IEnumerable<AppointmentSummaryDto>>() { statusCode = 200, data = result };
 		}
-		public async Task<IEnumerable<AppointmentSummaryDto>> GetMonthlyAppointmentsByPractitioner(long practitionerId, int year, int month)
+		public async Task<APIResponse<IEnumerable<AppointmentSummaryDto>>> GetMonthlyAppointmentsByPractitioner(long practitionerId, int year, int month)
 		{
 			using var fileStream = File.OpenRead(@"./Data/appointments.json");
 
@@ -46,10 +52,14 @@ namespace Coreplus.Sample.Api.Services
 									.OrderByDescending(o => o.date)
 									.Select(s => new AppointmentSummaryDto(s.id, s.practitioner_id, s.date.Year, s.date.Month, s.revenue, s.cost));
 
-			return result;
-		}
-		
-		public async Task<AppointmentDetailsDto> GetAppointmentDetails(long appointmentId)
+			if(!result.Any())
+			{
+				return new APIResponse<IEnumerable<AppointmentSummaryDto>>() { statusCode = 404, message = "No record found!" };
+			}
+
+			return new APIResponse<IEnumerable<AppointmentSummaryDto>>() { statusCode = 200, data = result };
+		}		
+		public async Task<APIResponse<AppointmentDetailsDto>> GetAppointmentDetails(long appointmentId)
 		{
 			using var fileStream = File.OpenRead(@"./Data/appointments.json");
 
@@ -67,7 +77,12 @@ namespace Coreplus.Sample.Api.Services
 									.Select(s => new AppointmentDetailsDto(s.id, s.date, s.client_name, s.appointment_type, s.duration))
 									.FirstOrDefault();
 
-			return result;
+			if(result == null)
+			{
+				return new APIResponse<AppointmentDetailsDto>() { statusCode = 404, message = "Record not found!" };
+			}
+
+			return new APIResponse<AppointmentDetailsDto>() { statusCode = 200, data = result };
 		}
 	}
 }
