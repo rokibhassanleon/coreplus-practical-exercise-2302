@@ -10,9 +10,16 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 {
 	options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
 });
+builder.Services.AddCors();
+
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseCors(opt =>
+{
+	opt.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader();
+});
 
 var practitionerEndpoints = app.MapGroup("/practitioners");
 practitionerEndpoints.MapPractitionerEndpoints();
