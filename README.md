@@ -24,12 +24,13 @@ dotnet run
 ## Business Requirements
 Following business requirements met -
 
-1) Reporting
+### 1) Reporting
    To get Practitioners report select Date Range from the Practitioner Report UI Section and then click on "Show Report" button
+   
    To get specific practitioner report select a practitioner from left side ("Supervisor Practitioners" or "Remaining Practitioner") and then select date range
    from Practitioner Report UI Section followed by click on the "Show Report" button.
    
-   Technical details
+   #### Technical details
     ```bash
     /appointments/summary/
     ```
@@ -42,7 +43,7 @@ Following business requirements met -
 	
 	### In left side practitioner list green colored highlighted items means selected. And clicking again will deslect the item and back to orignal color.
    
-2) Breakdown of Practitioner's Appointments
+### 2) Breakdown of Practitioner's Appointments
    To view breakdown of any particular practitioner's appointments, click on the row from the summary report (should be visible after completing step#1).
    
    Technical details
@@ -56,7 +57,7 @@ Following business requirements met -
 
     This API returns the breakdown of a practitioner's appointments.
     
-3) Appointment Details
+### 3) Appointment Details
    Clicking on any appointment (which will be available after completing step#2) will present the appointment details.
    
    Technical details
@@ -66,7 +67,7 @@ Following business requirements met -
     This API has 1 parameter.
       1) appointmentId [Required]
 
-Other APIs
+### Other APIs
 Additional API added to fetch remaining practitioners -
 
   ```bash
@@ -76,4 +77,3 @@ Additional API added to fetch remaining practitioners -
   
 ## UI Project
 ## Priority given more on the functionality than the look of the UI.
-   
