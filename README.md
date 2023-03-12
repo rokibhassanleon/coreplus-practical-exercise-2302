@@ -47,22 +47,21 @@ Following business requirements met -
 ### 2) Breakdown of Practitioner's Appointments
    To view breakdown of any particular practitioner's appointments, click on the row from the summary report (should be visible after completing step#1).
    
-   #### Technical details
+   ### Technical Details
    
-    ```bash
-    /appointments/list/
-    ```
-    This API has 3 parameters.
+   ```bash
+   /appointments/summary/
+   ```
+   This API has 3 parameters.
       1) practitionerId [Required]
       2) dtStart [Required]
       3) dtEnd [Required]
-
-    This API returns the breakdown of a practitioner's appointments.
-    
+      This API returns the breakdown of a practitioner's appointments.
+      
 ### 3) Appointment Details
    Clicking on any appointment (which will be available after completing step#2) will present the appointment details.
    
-   Technical details
+   ### Technical details
     ```bash
     /appointments/details/
     ```
