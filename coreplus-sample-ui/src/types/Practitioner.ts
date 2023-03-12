@@ -14,5 +14,5 @@ enum PractitionerLevel {
 export interface APIResponse {
     statusCode: number,
     message: string | null,
-    data: Practitioner[]
+    data: any
 }
