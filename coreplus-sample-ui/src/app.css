@@ -21,3 +21,27 @@
   grid-area: 2 / 2 / 4 / 3;
   @apply border-[1px] border-gray-300 p-2;
 }
+.revenue-cost {
+  display: flex;
+  justify-content: space-between;
+}
+th, td {
+  min-width: 12rem;
+  padding: 1rem;
+  border: 1px solid;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cell-divider {
+  color: white;
+  height: 100%;
+  width: 2.4rem;
+  transform: rotate(90deg);
+  margin-top: 1.2rem;
+}
+
+.selected-row {
+  background-color: green !important;
+}
