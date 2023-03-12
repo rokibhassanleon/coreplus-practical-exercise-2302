@@ -31,6 +31,7 @@ Following business requirements met -
    from Practitioner Report UI Section followed by click on the "Show Report" button.
    
    #### Technical details
+   
     ```bash
     /appointments/summary/
     ```
@@ -46,7 +47,8 @@ Following business requirements met -
 ### 2) Breakdown of Practitioner's Appointments
    To view breakdown of any particular practitioner's appointments, click on the row from the summary report (should be visible after completing step#1).
    
-   Technical details
+   #### Technical details
+   
     ```bash
     /appointments/list/
     ```
