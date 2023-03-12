@@ -26,6 +26,7 @@ Following business requirements met -
 
 1) Reporting
    To get Practitioners report select Date Range from the Practitioner Report UI Section and then click on "Show Report" button
+   
    To get specific practitioner report select a practitioner from left side ("Supervisor Practitioners" or "Remaining Practitioner") and then select date range
    from Practitioner Report UI Section followed by click on the "Show Report" button.
    
