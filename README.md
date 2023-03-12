@@ -3,8 +3,8 @@
 This project covers the business requirements stated in the TASK.pdf
 
 ## Pre-requisites
-### coreplus-sample-api require DotNet 7 to run
-### coreplus-sample-ui recommend using NodeJs 16+ (developed using 18.10)
+coreplus-sample-api require DotNet 7 to run
+coreplus-sample-ui recommend using NodeJs 16+ (developed using 18.10)
 
 ## Installing Npm Packages
 To install the npm packages run - 
@@ -76,4 +76,3 @@ Additional API added to fetch remaining practitioners -
   
 ## UI Project
 ## Priority given more on the functionality than the look of the UI.
-   
