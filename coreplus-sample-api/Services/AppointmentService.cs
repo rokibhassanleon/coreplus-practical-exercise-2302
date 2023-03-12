@@ -1,4 +1,5 @@
-﻿using Coreplus.Sample.Api.Helpers;
+﻿using Coreplus.Sample.Api.DTOs;
+using Coreplus.Sample.Api.Helpers;
 using Coreplus.Sample.Api.Types;
 using Coreplus.Sample.Api.Utils;
 using System;
@@ -8,56 +9,115 @@ namespace Coreplus.Sample.Api.Services
 {
 	public class AppointmentService
 	{
-		public record AppointmentSummaryDto(long? id, long practitioner_id, int year, int month, decimal revenue, decimal cost);
+		public record AppointmentDto(long? id, long practitioner_id, string practitionerName, int year, int month, decimal revenue, decimal cost);
+		public record AppointmentListDto(long? id, long practitioner_id, DateTimeOffset date, decimal revenue, decimal cost);
 		public record AppointmentDetailsDto(long id, DateTimeOffset date, string client_name, string appointment_type, int duration);
 		public async Task<APIResponse<IEnumerable<AppointmentSummaryDto>>> GetRevenueAndCostByPractitioner(long practitionerId, DateTime dtStart, DateTime dtEnd)
 		{
 			using var fileStream = File.OpenRead(@"./Data/appointments.json");
+			using var practitionerStream = File.OpenRead(@"./Data/practitioners.json");
 
 			JsonSerializerOptions options = new JsonSerializerOptions();
 			options.Converters.Add(new JsonDateTimeConverter());
 
-			var data = await JsonSerializer.DeserializeAsync<Appointments[]>(fileStream, options);
-			if (data == null)
+			//Read json data files
+			var appointmentData = await JsonSerializer.DeserializeAsync<Appointments[]>(fileStream, options);
+			var practitionerData = await JsonSerializer.DeserializeAsync<Practitioner[]>(practitionerStream, options);
+
+			//If no data then throw exception
+			if (appointmentData == null || practitionerData == null)
 			{
 				throw new Exception("Data read error");
 			}
 
-			var result = data.Where(x => x.practitioner_id == practitionerId && x.date >= dtStart && x.date <= dtEnd)
-									.OrderBy(o => o.date.Year).ThenBy(t => t.date.Month)
-									.GroupBy(x => new { x.date.Year, x.date.Month })
-									.Select(s => new AppointmentSummaryDto(null, practitionerId, s.Key.Year, s.Key.Month, s.Sum(r => r.revenue), s.Sum(c => c.cost)));
+			//Join Practitioner and Appointment data (to fetch Practitioner name) and filter by date range
+			var query = from appointment in appointmentData
+						join practitioner in practitionerData on appointment.practitioner_id equals practitioner.id
+						where appointment.date >= dtStart && appointment.date <= dtEnd
+						select new AppointmentDto(null, appointment.practitioner_id, practitioner.name, appointment.date.Year,
+														 appointment.date.Month, appointment.revenue, appointment.cost);
 
+			//If practitionerId provided then filter the data
+			if(practitionerId > 0)
+			{
+				query = query.Where(x => x.practitioner_id == practitionerId);
+			}
+
+			//Group data with Year and Month
+			var result = query.OrderBy(x => x.year).ThenBy(t => t.month)
+							  .GroupBy(x => new { x.year, x.month, x.practitionerName, x.practitioner_id })
+							  .Select(s => new AppointmentDto(null, s.Key.practitioner_id, 
+																	 s.Key.practitionerName, s.Key.year, s.Key.month, 
+																	 s.Sum(r => r.revenue), s.Sum(c => c.cost))
+									 );
+
+			//If no record found then send 404 not found
 			if(!result.Any())
 			{
 				return new APIResponse<IEnumerable<AppointmentSummaryDto>>() { statusCode = 404, message = "No record found!" };
 			}
+
+			//Get distinct practitioner name from result
+			var practitioners = result.Select(x => x.practitionerName).Distinct().ToList();
+
+			List<AppointmentSummaryDto> summaryResult = new List<AppointmentSummaryDto>();
+
+			foreach(var item in practitioners)
+			{
+				//Filter result with practitionerName
+				var records = result.Where(x => x.practitionerName == item).ToList();
+
+				//Create AppointmentSummaryDto
+				AppointmentSummaryDto summary = new AppointmentSummaryDto();
+				summary.practitioner_id = records[0].practitioner_id;
+				summary.practitionerName = records[0].practitionerName;
+
+				List<AppointmentList> appointmentLists= new List<AppointmentList>();
+
+				//Loop through the individual practitioner records and create AppointmentList
+				records.ForEach(x => appointmentLists.Add(new AppointmentList()
+				{
+					year = x.year, 
+					month = x.month,
+					revenue = x.revenue,
+					cost = x.cost
+				}));
+
+				summary.appointmentList = appointmentLists;
+
+				summaryResult.Add(summary);
+			}
 			
-			return new APIResponse<IEnumerable<AppointmentSummaryDto>>() { statusCode = 200, data = result };
+			return new APIResponse<IEnumerable<AppointmentSummaryDto>>() { statusCode = 200, data = summaryResult };
 		}
-		public async Task<APIResponse<IEnumerable<AppointmentSummaryDto>>> GetMonthlyAppointmentsByPractitioner(long practitionerId, int year, int month)
+		public async Task<APIResponse<IEnumerable<AppointmentListDto>>> GetMonthlyAppointmentsByPractitioner(long practitionerId, DateTime dtStart, DateTime dtEnd)
 		{
 			using var fileStream = File.OpenRead(@"./Data/appointments.json");
 
 			JsonSerializerOptions options = new JsonSerializerOptions();
 			options.Converters.Add(new JsonDateTimeConverter());
 
+			//Fetch data from json data
 			var data = await JsonSerializer.DeserializeAsync<Appointments[]>(fileStream, options);
+
+			//If no data then throw exception
 			if (data == null)
 			{
 				throw new Exception("Data read error");
 			}
 
-			var result = data.Where(x => x.practitioner_id == practitionerId && x.date.Year == year && x.date.Month == month)
+			//Filter data with practitionerId and date range
+			var result = data.Where(x => x.practitioner_id == practitionerId && x.date >= dtStart && x.date <= dtEnd)
 									.OrderByDescending(o => o.date)
-									.Select(s => new AppointmentSummaryDto(s.id, s.practitioner_id, s.date.Year, s.date.Month, s.revenue, s.cost));
+									.Select(s => new AppointmentListDto(s.id, s.practitioner_id, s.date, s.revenue, s.cost));
 
+			//If no record found then return 404 not found
 			if(!result.Any())
 			{
-				return new APIResponse<IEnumerable<AppointmentSummaryDto>>() { statusCode = 404, message = "No record found!" };
+				return new APIResponse<IEnumerable<AppointmentListDto>>() { statusCode = 404, message = "No record found!" };
 			}
 
-			return new APIResponse<IEnumerable<AppointmentSummaryDto>>() { statusCode = 200, data = result };
+			return new APIResponse<IEnumerable<AppointmentListDto>>() { statusCode = 200, data = result };
 		}		
 		public async Task<APIResponse<AppointmentDetailsDto>> GetAppointmentDetails(long appointmentId)
 		{
@@ -66,17 +126,22 @@ namespace Coreplus.Sample.Api.Services
 			JsonSerializerOptions options = new JsonSerializerOptions();
 			options.Converters.Add(new JsonDateTimeConverter());
 
+			//Fetch data from json data
 			var data = await JsonSerializer.DeserializeAsync<Appointments[]>(fileStream, options);
+
+			//If not data then throw exception
 			if (data == null)
 			{
 				throw new Exception("Data read error");
 			}
 
+			//Filter data by appointmentId
 			var result = data.Where(x => x.id == appointmentId)
 									.OrderByDescending(o => o.date)
 									.Select(s => new AppointmentDetailsDto(s.id, s.date, s.client_name, s.appointment_type, s.duration))
 									.FirstOrDefault();
 
+			//If not record found the return 404 not found
 			if(result == null)
 			{
 				return new APIResponse<AppointmentDetailsDto>() { statusCode = 404, message = "Record not found!" };
