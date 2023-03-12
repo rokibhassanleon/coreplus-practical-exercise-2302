@@ -11,14 +11,18 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 	options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
 });
 builder.Services.AddCors();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors(opt =>
 {
-	opt.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader();
+	opt.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
 });
 
 var practitionerEndpoints = app.MapGroup("/practitioners");

@@ -7,7 +7,7 @@ namespace Coreplus.Sample.Api.Endpoints.Appointment
 	{
 		public static RouteGroupBuilder MapGetRevenueAndCostByPractitioner(this RouteGroupBuilder group)
 		{
-			group.MapGet("/summary", async (int practitionerId, DateTime dtStart, DateTime dtEnd) => 
+			group.MapGet("/summary", async (long practitionerId, DateTime dtStart, DateTime dtEnd) => 
 										await new AppointmentService().GetRevenueAndCostByPractitioner(practitionerId, dtStart, dtEnd));
 
 			return group;
@@ -15,8 +15,8 @@ namespace Coreplus.Sample.Api.Endpoints.Appointment
 
 		public static RouteGroupBuilder MapGetMonthlyAppointmentsByPractitioner(this RouteGroupBuilder group)
 		{
-			group.MapGet("/list", async (long practitionerId, int year, int month) =>
-										await new AppointmentService().GetMonthlyAppointmentsByPractitioner(practitionerId, year, month));
+			group.MapGet("/list", async (long practitionerId, DateTime dtStart, DateTime dtEnd) =>
+										await new AppointmentService().GetMonthlyAppointmentsByPractitioner(practitionerId, dtStart, dtEnd));
 
 			return group;
 		}

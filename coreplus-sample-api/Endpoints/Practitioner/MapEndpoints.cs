@@ -6,6 +6,7 @@ public static class MapEndpoints
     {
         group.MapGetAllPractitioners();
         group.MapGetSupervisorPractitioners();
+        group.MapGetRemainingPractitioners();
         return group;
     }
 }
