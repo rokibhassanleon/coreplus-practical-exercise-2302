@@ -22,7 +22,7 @@ dotnet run
 ```
 
 ## Business Requirements
-Following business requirements met -
+Following business requirements were covered -
 
 ### 1) Reporting
    To get Practitioners report select Date Range from the Practitioner Report UI Section and then click on "Show Report" button
