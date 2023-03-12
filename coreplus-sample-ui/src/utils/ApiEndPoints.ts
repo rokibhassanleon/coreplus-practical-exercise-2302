@@ -3,5 +3,7 @@ export var APIEndPoints = {
     GetSupervisors: rootUrl+"/practitioners/supervisors",
     GetOthers: rootUrl+"/practitioners/others",
     GetAll: rootUrl+"/practitioners",
-    GetAppointmentSummary: rootUrl+"/appointments/summary/?"
+    GetAppointmentSummary: rootUrl+"/appointments/summary/?",
+    GetAppointmentList: rootUrl+"/appointments/list?",
+    GetAppointmentDetails: rootUrl+"/appointments/details?"
 }

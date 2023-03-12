@@ -1,35 +1,30 @@
-import { useState, useEffect } from "react";
-import { getSupervisorPractitioners } from './services/PractitionerService'
+import SupervisorList from './components/supervisorsList';
+import OtherPractitionerList from './components/otherPractitionersList';
+import AppointmentReports from './components/report';
 import "./app.css";
 
-type resultProps = {
-  id: number;
-  name: string;
-};
-
+import React, { useState } from 'react';
 
 function App() {
-  const data = getSupervisorPractitioners()
+  const [practitionerId, setPractitionerId] = useState<number>(0);
 
-  if (data.length === 0) return null;
+  const togglePractitioner = (practitioner_id: number) => {
+    if (practitionerId === practitioner_id) {
+      setPractitionerId(0);
+    }
+    else {
+      setPractitionerId(practitioner_id);
+    }
+  };
 
   return (
-    <div className="h-screen w-full appshell">
+    <div className="w-full appshell">
       <div className="header flex flex-row items-center p-2 bg-primary shadow-sm">
         <p className="font-bold text-lg">coreplus</p>
       </div>
-      <div className="supervisors">
-        Supervisor practitioners
-        <ul>
-          {
-            data.map(item =>
-              <li key={item.id}>{item.name}</li>
-            )
-          }
-        </ul>
-      </div>
-      <div className="praclist">Remaining Practitioners</div>
-      <div className="pracinfo">Practitioner Report UI</div>
+      <SupervisorList practitionerId={practitionerId} onSupervisorChange={(practitionerId) => togglePractitioner(practitionerId)}/>
+      <OtherPractitionerList practitionerId={practitionerId} onOtherChange={(practitionerId) => togglePractitioner(practitionerId)} />
+      <AppointmentReports practitionerId={practitionerId} />
     </div>
   );
 }
