@@ -3,8 +3,8 @@
 This project covers the business requirements stated in the TASK.pdf
 
 ## Pre-requisites
-### coreplus-sample-api require DotNet 7 to run
-### coreplus-sample-ui recommend using NodeJs 16+ (developed using 18.10)
+coreplus-sample-api require DotNet 7 to run
+coreplus-sample-ui recommend using NodeJs 16+ (developed using 18.10)
 
 ## Installing Npm Packages
 To install the npm packages run - 
@@ -39,6 +39,8 @@ Following business requirements met -
       3) dtEnd [Required]
     
     This API return monthly revenue and cost of each practitioner.
+	
+	### In left side practitioner list green colored highlighted items means selected. And clicking again will deslect the item and back to orignal color.
    
 2) Breakdown of Practitioner's Appointments
    To view breakdown of any particular practitioner's appointments, click on the row from the summary report (should be visible after completing step#1).
@@ -74,4 +76,3 @@ Additional API added to fetch remaining practitioners -
   
 ## UI Project
 ## Priority given more on the functionality than the look of the UI.
-   
