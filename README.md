@@ -37,9 +37,7 @@ Following business requirements met -
       3) dtEnd [Required]
       This API return monthly revenue and cost of each practitioner.
         
-    ```bash
     /appointments/summary/
-    ```
 	
    ### In left side practitioner list green colored highlighted items means selected. And clicking again will deslect the item and back to orignal color.
 
@@ -64,9 +62,8 @@ Following business requirements met -
    This API has 1 parameter.
       1) appointmentId [Required]
       
-    ```bash
     /appointments/details/
-    ```
+    
 
 ### Other APIs
 Additional API added to fetch remaining practitioners -
