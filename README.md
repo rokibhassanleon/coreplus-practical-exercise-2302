@@ -2,11 +2,11 @@
 
 This project covers the business requirements stated in the TASK.pdf
 
-##Pre-requisites
+## Pre-requisites
 coreplus-sample-api require DotNet 7 to run
 coreplus-sample-ui recommend using NodeJs 16+ (developed using 18.10)
 
-##Installing Npm Packages
+## Installing Npm Packages
 To install the npm packages run - 
 ```bash
 npm i
@@ -21,7 +21,7 @@ To Run API Project run follwoing command -
 dotnet run
 ```
 
-##Business Requirements
+## Business Requirements
 Following business requirements met -
 
 1) Reporting
@@ -72,6 +72,6 @@ Additional API added to fetch remaining practitioners -
   ```
   This returns the practitioners other than OWNER and ADMIN
   
-##UI Project
-##Priority given more on the functionality than the look of the UI.
+## UI Project
+## Priority given more on the functionality than the look of the UI.
    
