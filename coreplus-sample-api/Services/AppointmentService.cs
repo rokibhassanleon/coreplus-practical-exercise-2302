@@ -1,4 +1,5 @@
-﻿using Coreplus.Sample.Api.Helpers;
+﻿using Coreplus.Sample.Api.DTOs;
+using Coreplus.Sample.Api.Helpers;
 using Coreplus.Sample.Api.Types;
 using Coreplus.Sample.Api.Utils;
 using System;
@@ -11,8 +12,6 @@ namespace Coreplus.Sample.Api.Services
 		public record AppointmentDto(long? id, long practitioner_id, string practitionerName, int year, int month, decimal revenue, decimal cost);
 		public record AppointmentListDto(long? id, long practitioner_id, DateTimeOffset date, decimal revenue, decimal cost);
 		public record AppointmentDetailsDto(long id, DateTimeOffset date, string client_name, string appointment_type, int duration);
-		public record AppointmentSummaryListDto(int year, int month, decimal revenue, decimal cost);
-		public record AppointmentSummaryDto(long practitioner_id, string practitionerName, IEnumerable<AppointmentSummaryListDto> appointmentList);
 		public async Task<APIResponse<IEnumerable<AppointmentSummaryDto>>> GetRevenueAndCostByPractitioner(long practitionerId, DateTime dtStart, DateTime dtEnd)
 		{
 			using var fileStream = File.OpenRead(@"./Data/appointments.json");
@@ -68,13 +67,23 @@ namespace Coreplus.Sample.Api.Services
 				//Filter result with practitionerName
 				var records = result.Where(x => x.practitionerName == item).ToList();
 
-				List<AppointmentSummaryListDto> appointmentLists= new List<AppointmentSummaryListDto>();
+				//Create AppointmentSummaryDto
+				AppointmentSummaryDto summary = new AppointmentSummaryDto();
+				summary.practitioner_id = records[0].practitioner_id;
+				summary.practitionerName = records[0].practitionerName;
+
+				List<AppointmentList> appointmentLists= new List<AppointmentList>();
 
 				//Loop through the individual practitioner records and create AppointmentList
-				records.ForEach(x => appointmentLists.Add(new AppointmentSummaryListDto(x.year, x.month, x.revenue, x.cost)));
+				records.ForEach(x => appointmentLists.Add(new AppointmentList()
+				{
+					year = x.year, 
+					month = x.month,
+					revenue = x.revenue,
+					cost = x.cost
+				}));
 
-				//Create AppointmentSummaryDto
-				AppointmentSummaryDto summary = new AppointmentSummaryDto(records[0].practitioner_id, records[0].practitionerName,appointmentLists);
+				summary.appointmentList = appointmentLists;
 
 				summaryResult.Add(summary);
 			}
@@ -99,7 +108,7 @@ namespace Coreplus.Sample.Api.Services
 
 			//Filter data with practitionerId and date range
 			var result = data.Where(x => x.practitioner_id == practitionerId && x.date >= dtStart && x.date <= dtEnd)
-									.OrderBy(o => o.date)
+									.OrderByDescending(o => o.date)
 									.Select(s => new AppointmentListDto(s.id, s.practitioner_id, s.date, s.revenue, s.cost));
 
 			//If no record found then return 404 not found
