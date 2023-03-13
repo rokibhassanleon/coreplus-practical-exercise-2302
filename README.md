@@ -22,7 +22,7 @@ dotnet run
 ```
 
 ## Business Requirements
-Following business requirements met -
+Following business requirements were covered -
 
 ### 1) Reporting
    To get Practitioners report select Date Range from the Practitioner Report UI Section and then click on "Show Report" button
@@ -30,42 +30,40 @@ Following business requirements met -
    To get specific practitioner report select a practitioner from left side ("Supervisor Practitioners" or "Remaining Practitioner") and then select date range
    from Practitioner Report UI Section followed by click on the "Show Report" button.
    
-   #### Technical details
-    ```bash
-    /appointments/summary/
-    ```
-    This API has 3 parameters.
+   ### Technical details
+   This API has 3 parameters.
       1) practitionerId [Optional but by default 0 should be pass]
       2) dtStart [Required]
       3) dtEnd [Required]
-    
-    This API return monthly revenue and cost of each practitioner.
+      This API return monthly revenue and cost of each practitioner.
+        
+    /appointments/summary/
 	
-	### In left side practitioner list green colored highlighted items means selected. And clicking again will deslect the item and back to orignal color.
-   
+   ### In left side practitioner list green colored highlighted items means selected. And clicking again will deslect the item and back to orignal color.
+
 ### 2) Breakdown of Practitioner's Appointments
    To view breakdown of any particular practitioner's appointments, click on the row from the summary report (should be visible after completing step#1).
    
-   Technical details
-    ```bash
-    /appointments/list/
-    ```
-    This API has 3 parameters.
+   ### Technical Details
+   This API has 3 parameters.
       1) practitionerId [Required]
       2) dtStart [Required]
       3) dtEnd [Required]
-
-    This API returns the breakdown of a practitioner's appointments.
-    
+      This API returns the breakdown of a practitioner's appointments.
+      
+   ```bash
+   /appointments/summary/
+   ```
+      
 ### 3) Appointment Details
    Clicking on any appointment (which will be available after completing step#2) will present the appointment details.
    
-   Technical details
-    ```bash
-    /appointments/details/
-    ```
-    This API has 1 parameter.
+   ### Technical details
+   This API has 1 parameter.
       1) appointmentId [Required]
+      
+    /appointments/details/
+    
 
 ### Other APIs
 Additional API added to fetch remaining practitioners -
